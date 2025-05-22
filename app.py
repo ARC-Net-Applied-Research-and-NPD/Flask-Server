@@ -53,10 +53,12 @@ os.makedirs(AUDIO_DIR, exist_ok=True)
 os.makedirs(REPORTS_DIR, exist_ok=True)
 
 # Routes
-@app.route("/")
+@app.route("/", methods=["GET", "POST"])
 def index():
     if current_user.is_authenticated:
-        return redirect(url_for('dashboard'))
+        if request.method == "POST":
+            return redirect(url_for('dashboard'))
+        return render_template("index.html", username=current_user.username)
     return redirect(url_for('login'))
 
 @app.route("/signup", methods=["GET", "POST"])
@@ -153,6 +155,16 @@ def verify_signup_otp():
         
     return render_template("verify_otp.html")
 
+@app.route("/test-results")
+def test_results():
+    # Sample data for testing results.html
+    sample_data = {
+        'user_name': 'Test User',
+        'video_filename': 'sample.mp4',
+        'pdf_url': url_for('static', filename='sample.pdf')
+    }
+    return render_template('results.html', **sample_data)
+
 @app.route("/logout")
 @login_required
 def logout():
@@ -191,7 +203,9 @@ def dashboard():
         video_file_path = os.path.join(user_video_dir, f"{user_name}_{int(time.time())}.mp4")
 
         if youtube_url:
+            print("hello")
             response = requests.post("http://localhost:8001/download_video", json={"url": youtube_url})
+            print("hello")
             if response.status_code != 200:
                 raise Exception(f"Failed to download YouTube video: {response.text}")
             
@@ -280,10 +294,20 @@ def dashboard():
         with open(pdf_path, "wb") as pdf_file:
             pdf_file.write(report_response.content)
         
-        return jsonify({"message": "PDF generated successfully"}), 200
+        # Get relative paths for template
+        video_filename = os.path.basename(video_file_path)
+        pdf_url = url_for('download_pdf')
+        
+        return render_template('results.html', 
+                           user_name=user_name,
+                           video_filename=video_filename,
+                           pdf_url=pdf_url)
     
     except Exception as e:
         return jsonify({"message": f"An error occurred: {str(e)}"}), 500
+
+
+
 
 @app.route('/uploads/<filename>')
 @login_required

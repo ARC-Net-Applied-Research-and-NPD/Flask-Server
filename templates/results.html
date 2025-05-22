@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="hero-section rounded-4 mb-5 position-relative overflow-hidden">
+    <div class="text-center py-4">
+      <h1 class="display-4 fw-bold animate__animated animate__fadeInDown text-purple">
+        Analysis Completed!
+      </h1>
+      <p class="lead animate__animated animate__fadeInUp text-white mb-0">
+        Thank you, <strong class="text-white">{{ user_name }}</strong>! Your video has been analyzed.
+      </p>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-md-6 animate__animated animate__fadeInLeft">
+      <div class="card h-100" style="background: linear-gradient(145deg, #ffffff, #f3f4f6); border: none; border-radius: 1.25rem; box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);">
+        <div class="card-body p-4">
+          <h5 class="card-title fw-bold mb-4" style="color: var(--primary-blue); font-size: 1.25rem;">Your Uploaded Video</h5>
+          <div class="video-container position-relative" style="background: rgba(0,0,0,0.05); border-radius: 1rem; overflow: hidden;">
+            <video width="100%" controls class="rounded-3" style="box-shadow: 0 8px 20px rgba(0,0,0,0.1);">
+              <source src="{{ url_for('uploaded_file', filename=video_filename) }}" type="video/mp4">
+              Your browser does not support the video tag.
+            </video>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-md-6 animate__animated animate__fadeInRight">
+      <div class="card h-100" style="background: linear-gradient(145deg, #ffffff, #f3f4f6); border: none; border-radius: 1.25rem; box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);">
+        <div class="card-body p-4">
+          <h5 class="card-title fw-bold mb-4" style="color: var(--primary-blue); font-size: 1.25rem;">Analysis Report</h5>
+          <div class="pdf-container position-relative" style="background: rgba(0,0,0,0.05); border-radius: 1rem; overflow: hidden; height: 500px;">
+            <iframe src="{{ url_for('uploaded_file', filename='reports/combined_report.pdf') }}" class="w-100 h-100 rounded-3" style="border: none; box-shadow: 0 8px 20px rgba(0,0,0,0.1);"></iframe>
+          </div>
+          <div class="text-center mt-4">
+            <a href="{{ url_for('uploaded_file', filename='reports/combined_report.pdf') }}" class="btn btn-lg px-4" download style="background: var(--gradient-1); border: none; color: white; border-radius: 0.75rem; font-weight: 500; transition: transform 0.2s;">
+              <i class="bi bi-download me-2"></i>Download Report
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
